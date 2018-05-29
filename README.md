@@ -1,6 +1,6 @@
 # EthKan Contracts
 
-"Proof-of-concept contract for EthKan."
+> Proof-of-concept contract for EthKan.
 
 ## Install
 Install MetaMask Chrome extension: https://metamask.io/
@@ -33,3 +33,9 @@ Save the address of deployed EthKan contract in terminal after `Ethkan: `. You w
 <br>
 <br>
 You may also want to copy the `./build/contracts/EthKan.json` file beause this is your contract ABI (which is needed for dapp).
+
+## Test
+On command line from repo directory:
+```
+truffle test
+```
