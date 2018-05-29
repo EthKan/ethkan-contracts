@@ -35,47 +35,49 @@ contract EthKan {
     mapping (uint => address) private projectToOwner;
     mapping (uint => uint[]) private projectToCards;
 
-    function createProject(string tokenSymbol) public returns (uint) {
-        require(projects[tokenSymbol] == 0);
+    function createProject(string _tokenSymbol) public returns (uint) {
+        require(projects[_tokenSymbol] == 0);
         projectCount++;
-        projects[tokenSymbol] = projectCount;
+        projects[_tokenSymbol] = projectCount;
         projectToOwner[projectCount] = msg.sender;
         ownerToProjects[msg.sender].push(projectCount);
-        NewProject(projectCount, msg.sender);
+        emit NewProject(projectCount, msg.sender);
         return projectCount;
     }
 
-    function createCard(string tokenSymbol) public returns (uint) {
-        require(projects[tokenSymbol] != 0);
+    function createCard(string _tokenSymbol) public returns (uint) {
+        require(projects[_tokenSymbol] != 0);
         cardCount++;
         cards[cardCount] = Card(
             true, 
             cardCount, 
-            projects[tokenSymbol], 
+            projects[_tokenSymbol], 
             0, 
             msg.sender, 
             address(0x0), 
             "deployed"
         );
         ownerToCards[msg.sender].push(cardCount);
-        projectToCards[projects[tokenSymbol]].push(cardCount);
-        NewCard(cardCount, projects[tokenSymbol], msg.sender);
+        projectToCards[projects[_tokenSymbol]].push(cardCount);
+        emit NewCard(cardCount, projects[_tokenSymbol], msg.sender);
         return cardCount;
     }
 
     function claimCard(uint _cardId) public {
         require(cards[_cardId].exists == true);
-        cards[_cardId].claimedBy = msg.sender;
+        Card storage c = cards[_cardId];
+        require(keccak256(c.status) != keccak256("approved"));
+        c.claimedBy = msg.sender;
         cards[_cardId].status = "claimed";
-        NewClaim(_cardId, cards[_cardId].projectId, msg.sender);
+        emit NewClaim(_cardId, cards[_cardId].projectId, msg.sender);
     }
 
     function fundCard(uint _cardId, uint _amount) public {
         require(cards[_cardId].exists == true);
-        Card c = cards[_cardId];
+        Card storage c = cards[_cardId];
         require(keccak256(c.status) != keccak256("approved"));
-        c.balance = c.balance + _amount;
-        NewFunds(_cardId, c.projectId, _amount, msg.sender);
+        c.balance = c.balance.add(_amount);
+        emit NewFunds(_cardId, c.projectId, _amount, msg.sender);
     }
 
     function approveCard(uint _cardId) public {
@@ -85,7 +87,7 @@ contract EthKan {
         Card c = cards[_cardId];
         c.balance = 0;
         c.status = "approved";
-        NewApproval(_cardId, c.projectId, _funds, c.claimedBy);
+        emit NewApproval(_cardId, c.projectId, _funds, c.claimedBy);
     }
     
     function cardInfo(uint _cardId) public view returns (uint, uint, address, address, string) {
@@ -99,7 +101,7 @@ contract EthKan {
     }
     
     function projectInfo(string _projectSymbol) public view returns (uint[], address) {
-        // require(projects[_projectSymbol] != 0);
+        require(projects[_projectSymbol] != 0);
         uint projectId = projects[_projectSymbol];
         return (projectToCards[projectId], projectToOwner[projectId]);
     }
