@@ -22,6 +22,10 @@ On command line from repo directory:
 ```
 truffle migrate --network ganache
 ```
+If you get a weird deployment error try:
+```
+truffle migrate --network ganache --reset
+```
 This deploys contract to default ganache based on configs in `truffle.js`.
 <br>
 <br>
