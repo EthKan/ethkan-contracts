@@ -25,7 +25,7 @@ truffle migrate --network ganache
 This deploys contract to default ganache based on configs in `truffle.js`.
 <br>
 <br>
-Save the address of deployed EthKan contract in terminal after "Ethkan: ." You will need this to run dapp.
+Save the address of deployed EthKan contract in terminal after `Ethkan: `. You will need this to run dapp.
 <br>
 <br>
 You may also want to copy the `./build/contracts/EthKan.json` file beause this is your contract ABI (which is needed for dapp).
