@@ -11,7 +11,7 @@ npm install -g truffle
 ```
 Clone this repo locally. Change directories to inside newly created repo.
 ```
-truffle install
+npm install
 ```
 
 ## Deploy contracts on local Ganache testnet
